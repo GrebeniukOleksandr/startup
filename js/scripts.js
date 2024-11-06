@@ -84,16 +84,16 @@ document.addEventListener('click', (event) => {
 });
 heroFormBtn.addEventListener('click', (event) => {
     event.preventDefault();
-    const nameInput = document.querySelector('#name').value;
+    const nameInput = document.querySelector('#nameregistr').value;
     const logoLink = document.querySelector('.header_menu-logo');
     if (nameInput) {
         logoLink.textContent = `Hello, ${nameInput}`;
         heroForm.style.opacity = '0';
         heroForm.style.zIndex = '-1';
     }
-    document.querySelector('#name').value = '';
-    document.querySelector('#phone').value = '';
-    document.querySelector('#email').value = '';
+    document.querySelector('#nameregistr').value = '';
+    document.querySelector('#phoneregistr').value = '';
+    document.querySelector('#emailregistr').value = '';
 });
 
 // scroll menu
@@ -227,16 +227,24 @@ buttons.forEach(button => {
 });
 window.addEventListener('load', () => {
     const savedFilter = localStorage.getItem('selectedFilter');
-    buttons.forEach(btn => btn.classList.remove('active'));
-    const activeButton = document.querySelector(`button[data-filter="${savedFilter}"]`);
-    activeButton.classList.add('active');
-    workItems.forEach(item => {
-        if (item.classList.contains(savedFilter)) {
-            item.style.display = 'block'; 
-        } else {
-            item.style.display = 'none';
+    if (savedFilter) {
+        const activeButton = document.querySelector(`button[data-filter="${savedFilter}"]`);
+        if (activeButton) {
+            buttons.forEach(btn => btn.classList.remove('active'));
+            activeButton.classList.add('active');
         }
-    });
+        workItems.forEach(item => {
+            if (item.classList.contains(savedFilter)) {
+                item.style.display = 'block';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    } else {
+        workItems.forEach(item => {
+            item.style.display = 'block';
+        });
+    }
 });
 
 // parallax offer
@@ -335,3 +343,51 @@ observer.observe(blog);
 observer.observe(contact);
 
 
+// form save
+const form = document.getElementById('form');
+const send = document.getElementById('send');
+const reject = document.getElementById('popup_reject');
+const popap = document.getElementById('popup');
+const accent = document.getElementById('popup_accept');
+const popupName = document.getElementById('popup_name');
+const popupEmail = document.getElementById('popup_email');
+const popupSubject = document.getElementById('popup_subject');
+const popupCompany = document.getElementById('popup_company');
+const popupMessage = document.getElementById('popup_message');
+
+send.addEventListener('click', function(event) {
+    event.preventDefault(); 
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const subject = document.getElementById('subject').value;
+    const company = document.getElementById('company').value;
+    const message = document.getElementById('message').value;
+    popupName.textContent = name;
+    popupEmail.textContent = email;
+    popupSubject.textContent = subject;
+    popupCompany.textContent = company;
+    popupMessage.textContent = message;
+    popap.style.display = 'block';
+});
+accent.addEventListener('click', function(event) {
+    event.preventDefault(); 
+    localStorage.setItem('name', name);
+    localStorage.setItem('email', email);
+    localStorage.setItem('subject', subject);
+    localStorage.setItem('company', company);
+    localStorage.setItem('message', message);
+    popap.style.display = 'none';
+});
+reject.addEventListener('click', function(event) {
+    event.preventDefault(); 
+    popap.style.display = 'none';
+});
+window.addEventListener('load', function() {
+    if (localStorage.getItem('name')) {
+        document.getElementById('name').value = localStorage.getItem('name');
+        document.getElementById('email').value = localStorage.getItem('email');
+        document.getElementById('subject').value = localStorage.getItem('subject');
+        document.getElementById('company').value = localStorage.getItem('company');
+        document.getElementById('message').value = localStorage.getItem('message');
+    }
+});
