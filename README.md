@@ -1,1 +1,1 @@
-echo "My startup"
+"My startup"
