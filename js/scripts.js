@@ -67,15 +67,55 @@ document.addEventListener('scroll', () => {
         header.style.top = '0';
     }, 150);
 });
-
-// open hero_form
+// hero_form
 const heroForm = document.querySelector('.hero_form');
 const openHeroForm = document.querySelector('.hero_content-link');
 const heroFormBtn = document.querySelector('.hero_form-btn');
+const btnContainer = heroFormBtn.parentElement;
+const logoLink = document.querySelector('.header_menu-logo');
+const nameInput = document.querySelector('#nameregistr');
+
+let isDragging = false;
+let startBtn = 0;
+
+heroFormBtn.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    startBtn = e.clientX;
+    const containerWidth = btnContainer.offsetWidth;
+
+    const onMouseMove = (event) => {
+        if (!isDragging) return;
+        let newLeft = event.clientX - startBtn;
+        newLeft = Math.max(0, Math.min(newLeft, containerWidth - heroFormBtn.offsetWidth));
+        heroFormBtn.style.transform = `translateX(${newLeft}px)`;
+        if (newLeft >= containerWidth - heroFormBtn.offsetWidth) {
+            if (nameInput.value.trim() === '') {
+                nameInput.focus();
+                heroFormBtn.style.transform = 'translateX(0)';
+                isDragging = false;
+                return;
+            }
+            logoLink.textContent = `Hello, ${nameInput.value}`;
+            heroForm.style.opacity = '0';
+            heroForm.style.zIndex = '-1';
+            nameInput.value = '';
+        }
+    };
+
+    const onMouseUp = () => {
+        isDragging = false;
+        document.removeEventListener('mousemove', onMouseMove);
+        document.removeEventListener('mouseup', onMouseUp);
+        heroFormBtn.style.transform = 'translateX(0)';
+    };
+
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+});
 openHeroForm.addEventListener('click', () => {
     heroForm.style.opacity = '1';
     heroForm.style.zIndex = '99';
-})
+});
 document.addEventListener('click', (event) => {
     if (!heroForm.contains(event.target) && !openHeroForm.contains(event.target)) {
         heroForm.style.opacity = '0';
@@ -84,20 +124,11 @@ document.addEventListener('click', (event) => {
 });
 heroFormBtn.addEventListener('click', (event) => {
     event.preventDefault();
-    const nameInput = document.querySelector('#nameregistr').value;
-    const logoLink = document.querySelector('.header_menu-logo');
-    if (nameInput) {
-        logoLink.textContent = `Hello, ${nameInput}`;
-        heroForm.style.opacity = '0';
-        heroForm.style.zIndex = '-1';
-    }
-    document.querySelector('#nameregistr').value = '';
-    document.querySelector('#phoneregistr').value = '';
-    document.querySelector('#emailregistr').value = '';
 });
 
 // scroll menu
 const headerMenuLinks = document.querySelectorAll('.header_menu-link');
+const offerLink = document.querySelector('.offer_link');
 headerMenuLinks.forEach(link => {
     link.addEventListener('click', (event) => {
         event.preventDefault();
@@ -106,6 +137,12 @@ headerMenuLinks.forEach(link => {
         targetSection.scrollIntoView({ behavior: 'smooth' });
         header.classList.remove('open');
     });
+    offerLink.addEventListener('click', (event) =>{
+        event.preventDefault();
+        const targetId = link.getAttribute('href');
+        const targetSection = document.querySelector(targetId);
+        targetSection.scrollIntoView({ behavior: 'smooth' });
+    })
 });
 
 // parallax effect
@@ -136,7 +173,7 @@ let chit_click = 0;
 const chitClickElement = document.querySelector('.chit_click');
 const serviceImages = document.querySelectorAll('.change');
 const serviceSubTitle = document.querySelectorAll('.service_item-subtitle');
-chitClickElement.addEventListener('click', () => {
+function handleClick() {
     chit_click++;
     if (chit_click === 3) {
         serviceSubTitle.forEach(function(text){
@@ -144,8 +181,9 @@ chitClickElement.addEventListener('click', () => {
             text.style.fontWeight = 'bold';
         })
     }
-});
-
+};
+chitClickElement.addEventListener('click', handleClick);
+chitClickElement.addEventListener('touchstart', handleClick);
 // slider
 const items = document.querySelectorAll('.about_slider-item');
 const btnLeft = document.querySelector('.btn-left');
@@ -275,11 +313,11 @@ const articles = document.querySelectorAll('.blog_post-article');
 readMoreButtons.forEach((button,i) => {
     button.addEventListener('click', function() {
         const article = this.previousElementSibling; 
-        if (article.style.maxHeight === '173px') {
-            article.style.maxHeight = '68px';
+        if (article.style.maxHeight === '500px') {
+            article.style.maxHeight = '67px';
             this.textContent = 'read more';
         } else {
-            article.style.maxHeight = '173px';
+            article.style.maxHeight = '500px';
             this.textContent = 'hidden text';
         }
         if (i === 0 ) {
@@ -355,8 +393,25 @@ const popupSubject = document.getElementById('popup_subject');
 const popupCompany = document.getElementById('popup_company');
 const popupMessage = document.getElementById('popup_message');
 
-send.addEventListener('click', function(event) {
-    event.preventDefault(); 
+// Функція для валідації форми
+function focusFirstEmptyField() {
+    const fields = ['name', 'email', 'subject', 'company', 'message'];
+
+    for (const field of fields) {
+        const input = document.getElementById(field);
+        if (!input.value.trim()) {
+            input.focus();
+            return false;
+        }
+    }
+    return true;
+}
+
+send.addEventListener('click', function (event) {
+    event.preventDefault();
+    if (!focusFirstEmptyField()) {
+        return;
+    }
     const name = document.getElementById('name').value;
     const email = document.getElementById('email').value;
     const subject = document.getElementById('subject').value;
@@ -369,8 +424,14 @@ send.addEventListener('click', function(event) {
     popupMessage.textContent = message;
     popap.style.display = 'block';
 });
-accent.addEventListener('click', function(event) {
-    event.preventDefault(); 
+
+accent.addEventListener('click', function (event) {
+    event.preventDefault();
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const subject = document.getElementById('subject').value;
+    const company = document.getElementById('company').value;
+    const message = document.getElementById('message').value;
     localStorage.setItem('name', name);
     localStorage.setItem('email', email);
     localStorage.setItem('subject', subject);
@@ -378,11 +439,19 @@ accent.addEventListener('click', function(event) {
     localStorage.setItem('message', message);
     popap.style.display = 'none';
 });
-reject.addEventListener('click', function(event) {
-    event.preventDefault(); 
+
+reject.addEventListener('click', function (event) {
+    event.preventDefault();
     popap.style.display = 'none';
 });
-window.addEventListener('load', function() {
+document.addEventListener('click', function (event) {
+    if (popap.style.display === 'block') {
+        if (!popap.contains(event.target) && event.target !== send) {
+            popap.style.display = 'none';
+        }
+    }
+});
+window.addEventListener('load', function () {
     if (localStorage.getItem('name')) {
         document.getElementById('name').value = localStorage.getItem('name');
         document.getElementById('email').value = localStorage.getItem('email');
