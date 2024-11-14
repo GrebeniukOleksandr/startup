@@ -67,6 +67,7 @@ document.addEventListener('scroll', () => {
         header.style.top = '0';
     }, 150);
 });
+<<<<<<< HEAD
 // hero_form
 const heroForm = document.querySelector('.hero_form');
 const openHeroForm = document.querySelector('.hero_content-link');
@@ -126,20 +127,49 @@ openHeroForm.addEventListener('click', () => {
     heroForm.style.zIndex = '99';
 });
 
+=======
+
+// open hero_form
+const heroForm = document.querySelector('.hero_form');
+const openHeroForm = document.querySelector('.hero_content-link');
+const heroFormBtn = document.querySelector('.hero_form-btn');
+openHeroForm.addEventListener('click', () => {
+    heroForm.style.opacity = '1';
+    heroForm.style.zIndex = '99';
+})
+>>>>>>> main
 document.addEventListener('click', (event) => {
     if (!heroForm.contains(event.target) && !openHeroForm.contains(event.target)) {
         heroForm.style.opacity = '0';
         heroForm.style.zIndex = '-1';
     }
 });
+<<<<<<< HEAD
 
 heroFormBtn.addEventListener('click', (event) => {
     event.preventDefault();
+=======
+heroFormBtn.addEventListener('click', (event) => {
+    event.preventDefault();
+    const nameInput = document.querySelector('#name').value;
+    const logoLink = document.querySelector('.header_menu-logo');
+    if (nameInput) {
+        logoLink.textContent = `Hello, ${nameInput}`;
+        heroForm.style.opacity = '0';
+        heroForm.style.zIndex = '-1';
+    }
+    document.querySelector('#name').value = '';
+    document.querySelector('#phone').value = '';
+    document.querySelector('#email').value = '';
+>>>>>>> main
 });
 
 // scroll menu
 const headerMenuLinks = document.querySelectorAll('.header_menu-link');
+<<<<<<< HEAD
 const offerLink = document.querySelector('.offer_link');
+=======
+>>>>>>> main
 headerMenuLinks.forEach(link => {
     link.addEventListener('click', (event) => {
         event.preventDefault();
@@ -148,12 +178,15 @@ headerMenuLinks.forEach(link => {
         targetSection.scrollIntoView({ behavior: 'smooth' });
         header.classList.remove('open');
     });
+<<<<<<< HEAD
     offerLink.addEventListener('click', (event) =>{
         event.preventDefault();
         const targetId = link.getAttribute('href');
         const targetSection = document.querySelector(targetId);
         targetSection.scrollIntoView({ behavior: 'smooth' });
     })
+=======
+>>>>>>> main
 });
 
 // parallax effect
@@ -182,16 +215,24 @@ parallaxElement.addEventListener('mouseleave', function() {
 // chit_click
 let chit_click = 0;
 const chitClickElement = document.querySelector('.chit_click');
+<<<<<<< HEAD
 const serviceSubTitle = document.querySelectorAll('.service_item-subtitle');
 
 function handleClick(event) {
     event.preventDefault();
     chit_click++;
     
+=======
+const serviceImages = document.querySelectorAll('.change');
+const serviceSubTitle = document.querySelectorAll('.service_item-subtitle');
+chitClickElement.addEventListener('click', () => {
+    chit_click++;
+>>>>>>> main
     if (chit_click === 3) {
         serviceSubTitle.forEach(function(text){
             text.style.color = 'red'; 
             text.style.fontWeight = 'bold';
+<<<<<<< HEAD
         });
     }
 }
@@ -200,6 +241,11 @@ if ('ontouchstart' in window) {
 } else {
     chitClickElement.addEventListener('click', handleClick);
 }
+=======
+        })
+    }
+});
+>>>>>>> main
 
 // slider
 const items = document.querySelectorAll('.about_slider-item');
@@ -282,6 +328,7 @@ buttons.forEach(button => {
 });
 window.addEventListener('load', () => {
     const savedFilter = localStorage.getItem('selectedFilter');
+<<<<<<< HEAD
     if (savedFilter) {
         const activeButton = document.querySelector(`button[data-filter="${savedFilter}"]`);
         if (activeButton) {
@@ -300,6 +347,18 @@ window.addEventListener('load', () => {
             item.style.display = 'block';
         });
     }
+=======
+    buttons.forEach(btn => btn.classList.remove('active'));
+    const activeButton = document.querySelector(`button[data-filter="${savedFilter}"]`);
+    activeButton.classList.add('active');
+    workItems.forEach(item => {
+        if (item.classList.contains(savedFilter)) {
+            item.style.display = 'block'; 
+        } else {
+            item.style.display = 'none';
+        }
+    });
+>>>>>>> main
 });
 
 // parallax offer
@@ -330,11 +389,19 @@ const articles = document.querySelectorAll('.blog_post-article');
 readMoreButtons.forEach((button,i) => {
     button.addEventListener('click', function() {
         const article = this.previousElementSibling; 
+<<<<<<< HEAD
         if (article.style.maxHeight === '500px') {
             article.style.maxHeight = '67px';
             this.textContent = 'read more';
         } else {
             article.style.maxHeight = '500px';
+=======
+        if (article.style.maxHeight === '173px') {
+            article.style.maxHeight = '68px';
+            this.textContent = 'read more';
+        } else {
+            article.style.maxHeight = '173px';
+>>>>>>> main
             this.textContent = 'hidden text';
         }
         if (i === 0 ) {
@@ -343,6 +410,7 @@ readMoreButtons.forEach((button,i) => {
     });
 });
 
+<<<<<<< HEAD
 // banner marquee 
 if(window.innerWidth < 960){
     const bannerMarquee = document.querySelector('.slider_banner-content');
@@ -351,6 +419,8 @@ if(window.innerWidth < 960){
     bannerMarquee.appendChild(cloneSpan);
 }
 
+=======
+>>>>>>> main
 // slider quote
 const quotes = document.querySelectorAll('.slider_quote');
 const dots = document.querySelectorAll('.slider_quotes-dot');
@@ -406,6 +476,7 @@ observer.observe(blog);
 observer.observe(contact);
 
 
+<<<<<<< HEAD
 // form save
 const form = document.getElementById('form');
 const send = document.getElementById('send');
@@ -485,3 +556,5 @@ window.addEventListener('load', function () {
         document.getElementById('message').value = localStorage.getItem('message');
     }
 });
+=======
+>>>>>>> main
