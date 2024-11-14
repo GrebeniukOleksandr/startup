@@ -78,14 +78,15 @@ const nameInput = document.querySelector('#nameregistr');
 let isDragging = false;
 let startBtn = 0;
 
-heroFormBtn.addEventListener('mousedown', (e) => {
+const startDrag = (e) => {
     isDragging = true;
-    startBtn = e.clientX;
+    startBtn = e.clientX || e.touches[0].clientX;
     const containerWidth = btnContainer.offsetWidth;
 
-    const onMouseMove = (event) => {
+    const moveHandler = (event) => {
         if (!isDragging) return;
-        let newLeft = event.clientX - startBtn;
+        const clientX = event.clientX || event.touches[0].clientX;
+        let newLeft = clientX - startBtn;
         newLeft = Math.max(0, Math.min(newLeft, containerWidth - heroFormBtn.offsetWidth));
         heroFormBtn.style.transform = `translateX(${newLeft}px)`;
         if (newLeft >= containerWidth - heroFormBtn.offsetWidth) {
@@ -102,26 +103,36 @@ heroFormBtn.addEventListener('mousedown', (e) => {
         }
     };
 
-    const onMouseUp = () => {
+    const stopDrag = () => {
         isDragging = false;
-        document.removeEventListener('mousemove', onMouseMove);
-        document.removeEventListener('mouseup', onMouseUp);
+        document.removeEventListener('mousemove', moveHandler);
+        document.removeEventListener('mouseup', stopDrag);
+        document.removeEventListener('touchmove', moveHandler);
+        document.removeEventListener('touchend', stopDrag);
         heroFormBtn.style.transform = 'translateX(0)';
     };
 
-    document.addEventListener('mousemove', onMouseMove);
-    document.addEventListener('mouseup', onMouseUp);
-});
+    document.addEventListener('mousemove', moveHandler);
+    document.addEventListener('mouseup', stopDrag);
+    document.addEventListener('touchmove', moveHandler);
+    document.addEventListener('touchend', stopDrag);
+};
+
+heroFormBtn.addEventListener('mousedown', startDrag);
+heroFormBtn.addEventListener('touchstart', startDrag);
+
 openHeroForm.addEventListener('click', () => {
     heroForm.style.opacity = '1';
     heroForm.style.zIndex = '99';
 });
+
 document.addEventListener('click', (event) => {
     if (!heroForm.contains(event.target) && !openHeroForm.contains(event.target)) {
         heroForm.style.opacity = '0';
         heroForm.style.zIndex = '-1';
     }
 });
+
 heroFormBtn.addEventListener('click', (event) => {
     event.preventDefault();
 });
@@ -171,19 +182,25 @@ parallaxElement.addEventListener('mouseleave', function() {
 // chit_click
 let chit_click = 0;
 const chitClickElement = document.querySelector('.chit_click');
-const serviceImages = document.querySelectorAll('.change');
 const serviceSubTitle = document.querySelectorAll('.service_item-subtitle');
-function handleClick() {
+
+function handleClick(event) {
+    event.preventDefault();
     chit_click++;
+    
     if (chit_click === 3) {
         serviceSubTitle.forEach(function(text){
             text.style.color = 'red'; 
             text.style.fontWeight = 'bold';
-        })
+        });
     }
-};
-chitClickElement.addEventListener('click', handleClick);
-chitClickElement.addEventListener('touchstart', handleClick);
+}
+if ('ontouchstart' in window) {
+    chitClickElement.addEventListener('touchstart', handleClick);
+} else {
+    chitClickElement.addEventListener('click', handleClick);
+}
+
 // slider
 const items = document.querySelectorAll('.about_slider-item');
 const btnLeft = document.querySelector('.btn-left');
@@ -325,6 +342,14 @@ readMoreButtons.forEach((button,i) => {
         }
     });
 });
+
+// banner marquee 
+if(window.innerWidth < 960){
+    const bannerMarquee = document.querySelector('.slider_banner-content');
+    const spanElement = document.querySelector('.slider_banner-content span');
+    const cloneSpan = spanElement.cloneNode(true);
+    bannerMarquee.appendChild(cloneSpan);
+}
 
 // slider quote
 const quotes = document.querySelectorAll('.slider_quote');
